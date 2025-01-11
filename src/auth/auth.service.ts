@@ -30,6 +30,46 @@ export class AuthService {
         }
     }
 
+    async loginWithGoogle(user: any) {
+        const { provider, providerId, email, name } = user;
+
+        let existingUser = await this.prismaService.user.findUnique(
+            {
+                where: {
+                    provider_providerId: { provider, providerId }
+                }
+            }
+        )
+
+        if(existingUser) {
+            let payload = {sub: existingUser.id , email: existingUser.email , role: existingUser.role }
+            return {
+                "id": existingUser.id,
+                "name": existingUser.name,
+                "email": existingUser.email,
+                "access-token": this.jwtService.sign(payload)
+            }
+        }
+
+        existingUser = await this.prismaService.user.create({
+            data: {
+                name,
+                email,
+                provider: "GITHUB",
+                providerId,
+            }
+        })
+
+        let payload = {sub: existingUser.id , email: existingUser.email , role: existingUser.role }
+
+        return {
+            "id": existingUser.id,
+            "name": existingUser.name,
+            "email": existingUser.email,
+            "access-token": this.jwtService.sign(payload)
+        }
+    }
+
     async register(email: string , password: string , name: string) {
         const existingUser = await this.prismaService.user.findUnique({
             where: {
