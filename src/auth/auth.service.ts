@@ -70,7 +70,10 @@ export class AuthService {
         }
     }
 
-    async register(email: string , password: string , name: string) {
+    async register(email: string , password: string , name: string , confirmPassword: string) {
+        if (password !== confirmPassword) {
+            throw new ConflictException("Passwords Do Not Match");
+        }
         const existingUser = await this.prismaService.user.findUnique({
             where: {
                 email

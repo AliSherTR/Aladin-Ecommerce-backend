@@ -4,6 +4,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: ["http://localhost:3000" , "http://localhost:3001"],
+    
+  })
   const config = new DocumentBuilder() // configure the meta data for swagger documentation
     .setTitle('Aladin API')
     .setDescription('API documentation for Aladin Ecommerce')

@@ -21,7 +21,7 @@ export class AuthController {
     @Post("register")
     @ApiOperation({ summary: 'Register with email, password and username' })
     async register(@Body() body:SignUpDto){
-        return this.authService.register(body.email , body.password , body.username);
+        return this.authService.register(body.email , body.password , body.username , body.confirmPassword);
     }
 
     @Get("google")
