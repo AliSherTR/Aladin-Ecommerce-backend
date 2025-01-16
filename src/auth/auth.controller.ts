@@ -6,13 +6,13 @@ import { SignUpDto } from './dto/register.dto';
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Post("login")
     @UseGuards(AuthGuard("local"))
-    @UsePipes(new ValidationPipe)
+    @UsePipes(new ValidationPipe({whitelist: true}))
     @ApiOperation({ summary: 'Login with email and password' })
     async login(@Body() body: LoginDto, @Request() req: any) {
         return this.authService.login(req.user);
@@ -20,8 +20,9 @@ export class AuthController {
 
     @Post("register")
     @ApiOperation({ summary: 'Register with email, password and username' })
+    @UsePipes(new ValidationPipe())
     async register(@Body() body: SignUpDto) {
-        return this.authService.register(body.email, body.password, body.username, body.confirmPassword);
+        return this.authService.register(body.email, body.password, body.firstName , body.lastName, body.confirmPassword);
     }
 
     @Get("google")
