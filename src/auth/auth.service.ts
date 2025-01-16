@@ -26,20 +26,26 @@ export class AuthService {
         return {
             "id": user.id,
             "email" : user.email,
-            "access-token": this.jwtService.sign(payload)
+            "access_token": this.jwtService.sign(payload)
         }
     }
 
     async loginWithGoogle(user: any) {
         const { provider, providerId, email, name } = user;
 
-        let existingUser = await this.prismaService.user.findUnique(
-            {
-                where: {
-                    provider_providerId: { provider, providerId }
-                }
-            }
-        )
+        let existingUser = await this.prismaService.user.findFirst({
+            where: {
+                OR: [
+                    {
+                        provider: provider,
+                        providerId: providerId,
+                    },
+                    {
+                        email: email,
+                    },
+                ],
+            },
+        });
 
         if(existingUser) {
             let payload = {sub: existingUser.id , email: existingUser.email , role: existingUser.role }
@@ -47,7 +53,7 @@ export class AuthService {
                 "id": existingUser.id,
                 "name": existingUser.name,
                 "email": existingUser.email,
-                "access-token": this.jwtService.sign(payload)
+                "access_token": this.jwtService.sign(payload)
             }
         }
 
@@ -55,7 +61,7 @@ export class AuthService {
             data: {
                 name,
                 email,
-                provider: "GITHUB",
+                provider: "GOOGLE",
                 providerId,
             }
         })
@@ -66,7 +72,7 @@ export class AuthService {
             "id": existingUser.id,
             "name": existingUser.name,
             "email": existingUser.email,
-            "access-token": this.jwtService.sign(payload)
+            "access_token": this.jwtService.sign(payload)
         }
     }
 
@@ -99,7 +105,7 @@ export class AuthService {
         return {
             "id": user.id,
             "email" : user.email,
-            "access-token": this.jwtService.sign(payload)
+            "access_token": this.jwtService.sign(payload)
         }
     }
 }
