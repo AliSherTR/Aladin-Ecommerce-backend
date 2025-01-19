@@ -1,6 +1,5 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Req, Res, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthGuard } from '@nestjs/passport';
 import { CustomJwtAuthGuard } from 'src/guards/jwt.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -13,12 +12,17 @@ export class UsersController {
     @UseGuards(CustomJwtAuthGuard)
     @ApiOperation({ summary: 'Get Account Details' })
     async getUserData(@Req() req: any , @Res() res: any) {
-        const user = await this.usersService.getUserDetails(req);
+        const user = await this.usersService.getUserDetails(req.user);
         return res.status(200).json({
             status: 'success',
             message: 'User details retrieved successfully',
             data: user,
           });
+    }
 
+    @Patch("me")
+    @UseGuards(CustomJwtAuthGuard)
+    async updateUser(@Req() req: any){
+        return await this.usersService.updateUserInformation(req.user , req.body);
     }
 }
