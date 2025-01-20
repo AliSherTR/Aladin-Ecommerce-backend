@@ -1,7 +1,8 @@
-import { Controller, Get, Patch, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CustomJwtAuthGuard } from 'src/guards/jwt.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags("User")
 @Controller('users')
@@ -21,8 +22,10 @@ export class UsersController {
     }
 
     @Patch("me")
+    @ApiOperation({ summary: 'Update User Information' })
     @UseGuards(CustomJwtAuthGuard)
-    async updateUser(@Req() req: any){
-        return await this.usersService.updateUserInformation(req.user , req.body);
+    @UsePipes(new ValidationPipe({whitelist: true}))
+    async updateUser(@Req() req: any , @Body() body: UpdateUserDto){
+        return await this.usersService.updateUserInformation(req.user , body);
     }
 }
