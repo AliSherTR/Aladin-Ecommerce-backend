@@ -4,11 +4,13 @@ import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { SignUpDto } from './dto/register.dto';
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { TypedEventEmitter } from 'src/event-emitter/typed-event-emitter.class';
+
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) { }
+    constructor(private authService: AuthService , private readonly eventEmitter: TypedEventEmitter) { }
 
     @Post("login")
     @UseGuards(AuthGuard("local"))
@@ -22,7 +24,12 @@ export class AuthController {
     @ApiOperation({ summary: 'Register with email, password and username' })
     @UsePipes(new ValidationPipe())
     async register(@Body() body: SignUpDto) {
-         return this.authService.register(body.email, body.password, body.firstName , body.lastName, body.confirmPassword);
+        const user = await this.authService.register(body.email, body.password, body.firstName , body.lastName, body.confirmPassword);
+        this.eventEmitter.emit('user.welcome', {  
+            name: `${body.firstName} ${body.lastName}`,  
+            email: body.email,  
+          });  
+        return user;
     }
 
     @Get("google")
