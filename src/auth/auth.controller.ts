@@ -12,7 +12,7 @@ export class AuthController {
 
     @Post("login")
     @UseGuards(AuthGuard("local"))
-    @UsePipes(new ValidationPipe({whitelist: true}))
+    @UsePipes(new ValidationPipe({ whitelist: true }))
     @ApiOperation({ summary: 'Login with email and password' })
     async login(@Body() body: LoginDto, @Request() req: any) {
         return await this.authService.login(req.user);
@@ -22,7 +22,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Register with email, password and username' })
     @UsePipes(new ValidationPipe())
     async register(@Body() body: SignUpDto) {
-         return this.authService.register(body.email, body.password, body.firstName , body.lastName, body.confirmPassword);
+        return this.authService.register(body.email, body.password, body.firstName, body.lastName, body.confirmPassword);
     }
 
     @Get("google")

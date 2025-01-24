@@ -8,13 +8,14 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-  imports: [PrismaModule , JwtModule.register({
+  imports: [PrismaModule, JwtModule.register({
     secret: "secret",
-    signOptions: { 
-      expiresIn: "1h"
+    signOptions: {
+      expiresIn: "30d"
     }
-  })],
+  }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService , LocalStrategy , GoogleStrategy , JwtStrategy]
+  providers: [AuthService, LocalStrategy, GoogleStrategy, JwtStrategy]
 })
-export class AuthModule {}
+export class AuthModule { }

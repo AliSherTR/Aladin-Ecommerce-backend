@@ -5,13 +5,14 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [PrismaModule , JwtModule.register({
+  imports: [PrismaModule, JwtModule.register({
     secret: "secret",
-    signOptions: { 
-      expiresIn: "30d"
+    signOptions: {
+      expiresIn: "1h"
     }
-  })],
+  })
+  ],
   controllers: [UsersController],
   providers: [UsersService]
 })
-export class UsersModule {}
+export class UsersModule { }
