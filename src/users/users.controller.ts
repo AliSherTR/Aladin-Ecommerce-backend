@@ -29,7 +29,8 @@ export class UsersController {
     @UsePipes(new ValidationPipe({ whitelist: true }))
     async updateUser(@Req() req: any, @Body() body: UpdateUserDto, @UploadedFile() file: Express.Multer.File) {
         if (file) {
-            body.image = `/uploads/${file.filename}`;
+            const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+            body.image = `${baseUrl}/uploads/${file.filename}`;
 
         }
 

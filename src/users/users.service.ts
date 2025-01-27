@@ -24,6 +24,7 @@ export class UsersService {
         image: true,
       },
     });
+
     if (!user) {
       throw new UnauthorizedException('Your session has expired. Please Login again');
     }
@@ -42,9 +43,11 @@ export class UsersService {
         },
         select: {
           uuid: true,
-          email: true
+          email: true,
         }
       });
+
+
 
       const newUpdatedUser = await this.getUserDetails(updatedUser);
 

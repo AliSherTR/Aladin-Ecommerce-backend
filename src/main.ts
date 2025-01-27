@@ -18,7 +18,9 @@ async function bootstrap() {
   app.setGlobalPrefix("api")
 
   // Serve static assets
-  app.useStaticAssets(join(__dirname, '..', 'uploads'));
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: "/uploads/"
+  });
 
   const config = new DocumentBuilder() // configure the meta data for swagger documentation
     .setTitle('Aladin API')
