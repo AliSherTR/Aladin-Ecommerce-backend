@@ -29,7 +29,6 @@ export class AuthController {
             return res.status(401).json({
                 status: "success",
                 message: `We have sent you an email at ${user.email} to activate your account`,
-                access_token: user.access_token
             })
         }
         return res.status(200).json({
@@ -53,14 +52,14 @@ export class AuthController {
             email: body.email,
             activationLink: `http://localhost:3000/${user.access_token}`
         });
-        return res.status(201).json({
+        return res.status(401).json({
             status: "success",
             message: `We have sent you an email at ${user.email} to activate your account`
         })
     }
 
     @Post("verify-email")
-    @UseGuards(AuthGuard("local"))
+    @UseGuards(AuthGuard("jwt"))
     async verifyEmail(@Req() req: any) {
         return await this.authService.verifyEmail(req.user);
     }

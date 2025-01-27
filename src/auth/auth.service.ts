@@ -44,6 +44,8 @@ export class AuthService {
         IsEmailVerified: existingUser.isEmailVerified,
       };
 
+      console.log(payload)
+
       return {
         email: existingUser.email,
         firstName: existingUser.firstName,
@@ -52,7 +54,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload),
       };
     }
-    const payload = { sub: existingUser.uuid, email: existingUser.email, role: existingUser.role };
+    const payload = { sub: existingUser.uuid, email: existingUser.email, role: existingUser.role , IsEmailVerified: existingUser.isEmailVerified, };
 
     return {
       email: existingUser.email,
@@ -184,6 +186,7 @@ export class AuthService {
       sub: existingUser.uuid,
       email: existingUser.email,
       role: existingUser.role,
+      isEmailVerified: existingUser.isEmailVerified
     };
 
     return {
