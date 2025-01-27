@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome Email</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #0c3f8e;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .button {
+        display: inline-block;
+        margin: 20px auto;
+        padding: 12px 20px;
+        background-color: #4caf50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+      }
+      .footer {
+        background: #f1f1f1;
+        text-align: center;
+        padding: 15px;
+        font-size: 12px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">Welcome, <%= locals.name %>!</div>
+      <div class="content">
+        <p>Hi <%= locals.name %>,</p>
+        <p>
+          We're thrilled to have you join us! Thank you for signing up for Aladin. We're excited to have you with us.
+        </p>
+        <p>
+          If you have any questions or need assistance, don't hesitate to reach
+          out. We're here to help every step of the way!
+        </p>
+        <p>
+          Use the link to activate your account: <a href="<%= locals.activationLink %>"">Activation Link</a>
+        </p>
+        <p>Thanks again for joining, and welcome aboard!</p>
+        <p>Best regards,</p>
+        <p>The Aladin Team</p>
+      </div>
+      
+    </div>
+  </body>
+</html>

@@ -7,6 +7,9 @@ export class CustomJwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw new UnauthorizedException('Your session has expired. Please log in again.');
     }
+    if(!user.isEmailVerified) {
+      throw new UnauthorizedException('Your email is not verified.');
+    }
     return user;
   }
 }

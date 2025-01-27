@@ -14,27 +14,26 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement()) // Primary key for database operations
-  uuid        String   @default(uuid()) @unique      // Public unique identifier
-  email       String   @unique
-  password    String?
-  firstName   String
-  lastName    String
-  provider    String   @default("EMAIL") // EMAIL, GOOGLE, GITHUB
-  providerId  String?
-  role        role     @default(USER)    // USER, ADMIN
-  dateOfBirth DateTime?
-  phoneNumber String?
-  balance     Decimal  @default(0)
-  gender      String?
-  image       String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              Int       @id @default(autoincrement()) // Primary key for database operations
+  uuid            String    @unique @default(uuid()) // Public unique identifier
+  email           String    @unique
+  password        String?
+  firstName       String
+  lastName        String
+  provider        String    @default("EMAIL") // EMAIL, GOOGLE, GITHUB
+  providerId      String?
+  role            role      @default(USER) // USER, ADMIN
+  dateOfBirth     DateTime?
+  phoneNumber     String?
+  balance         Decimal   @default(0)
+  gender          String?
+  image           String?
+  isEmailVerified Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@unique([provider, providerId])
 }
-
 
 enum role {
   USER
