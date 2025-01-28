@@ -9,10 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    verifyEmail(user: any) {
-        throw new Error('Method not implemented.');
-    }
-    constructor(private readonly prismaService: PrismaService, private readonly jwtService: JwtService) { }
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly jwtService: JwtService,
+    ) { }
 
     async validateUser(email: string, password: string) {
         const user = await this.prismaService.user.findUnique({
@@ -27,14 +27,42 @@ export class AuthService {
     }
 
     async login(user: any) {
-        const payload = { sub: user.uuid, email: user.email, role: user.role }
+        const existingUser = await this.prismaService.user.findUnique({
+            where: {
+                email: user.email
+            }
+        })
+
+        if (!existingUser) {
+            throw new UnauthorizedException("Invalid Email or Password");
+        }
+        if (!existingUser.isEmailVerified) {
+            const payload = {
+                sub: existingUser.uuid,
+                email: existingUser.email,
+                role: existingUser.role,
+                IsEmailVerified: existingUser.isEmailVerified,
+            };
+
+            console.log(payload)
+
+            return {
+                email: existingUser.email,
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName,
+                isEmailVerified: existingUser.isEmailVerified,
+                access_token: this.jwtService.sign(payload),
+            };
+        }
+        const payload = { sub: existingUser.uuid, email: existingUser.email, role: existingUser.role, IsEmailVerified: existingUser.isEmailVerified, };
 
         return {
-            "email": user.email,
-            "firstName": user.firstName,
-            "lastName": user.lastName,
-            "access_token": this.jwtService.sign(payload)
-        }
+            email: existingUser.email,
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName,
+            isEmailVerified: existingUser.isEmailVerified,
+            access_token: this.jwtService.sign(payload),
+        };
     }
 
     async loginWithGoogle(user: any) {
@@ -73,13 +101,18 @@ export class AuthService {
                 firstName,
                 lastName,
                 email,
-                provider: "GOOGLE",
+                provider: 'GOOGLE',
                 providerId,
-                image
-            }
-        })
+                image,
+                isEmailVerified: true,
+            },
+        });
 
-        let payload = { sub: existingUser.id, email: existingUser.email, role: existingUser.role }
+        let payload = {
+            sub: existingUser.id,
+            email: existingUser.email,
+            role: existingUser.role,
+        };
 
         return {
             firstName: existingUser.firstName,
@@ -116,17 +149,51 @@ export class AuthService {
                 firstName,
                 lastName,
                 email,
-                password: hashedPassword
-            }
-        })
+                password: hashedPassword,
+            },
+        });
 
-        const payload = { sub: user.uuid, email: user.email, role: user.role }
+        const payload = {
+            sub: user.uuid,
+            email: user.email,
+            role: user.role,
+            IsEmailVerified: user.isEmailVerified,
+        };
 
         return {
-            "email": user.email,
-            "firstName": user.firstName,
-            "lastName": user.lastName,
-            "access_token": this.jwtService.sign(payload)
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            access_token: this.jwtService.sign(payload),
+        };
+    }
+
+    async verifyEmail(user: any) {
+        const existingUser = await this.prismaService.user.update({
+            where: {
+                email: user.email,
+            },
+            data: {
+                isEmailVerified: true,
+            },
+        });
+
+        if (!existingUser) {
+            throw new UnauthorizedException('Invalid Token');
         }
+
+        const payload = {
+            sub: existingUser.uuid,
+            email: existingUser.email,
+            role: existingUser.role,
+            isEmailVerified: existingUser.isEmailVerified
+        };
+
+        return {
+            email: existingUser.email,
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName,
+            access_token: this.jwtService.sign(payload),
+        };
     }
 }

@@ -11,10 +11,10 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
       transport: {
         host: 'smtp.gmail.com',
         port: 587,
-        secure: false,
+        secure: false, // Use true if using port 465
         auth: {
           user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          pass: process.env.EMAIL_PASS, // Not your Gmail password, but an app-specific password
         },
       },
       defaults: {
@@ -33,4 +33,3 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
   providers: [EmailService],
 })
 export class EmailModule { }
-
