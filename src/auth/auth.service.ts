@@ -6,10 +6,12 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AuthService {
+    verifyEmail(user: any) {
+        throw new Error('Method not implemented.');
+    }
     constructor(private readonly prismaService: PrismaService, private readonly jwtService: JwtService) { }
 
     async validateUser(email: string, password: string) {

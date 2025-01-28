@@ -14,12 +14,7 @@ import { TypedEventEmitterModule } from 'src/event-emitter/event-emitter.module'
     signOptions: {
       expiresIn: "30d"
     }
-<<<<<<< HEAD
-  }),
-  ],
-=======
-  }) , TypedEventEmitterModule ],
->>>>>>> be63b694591305f8994ff5b42ceda1a21d87e7ab
+  }), TypedEventEmitterModule],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, GoogleStrategy, JwtStrategy]
 })

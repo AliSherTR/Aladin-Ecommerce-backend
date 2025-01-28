@@ -15,15 +15,11 @@ export class AuthController {
 
     @Post("login")
     @UseGuards(AuthGuard("local"))
-<<<<<<< HEAD
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-=======
-    @UsePipes(new ValidationPipe({ whitelist: true , forbidNonWhitelisted: true }))
->>>>>>> be63b694591305f8994ff5b42ceda1a21d87e7ab
+    @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     @ApiOperation({ summary: 'Login with email and password' })
     async login(@Body() body: LoginDto, @Request() req: any, @Res() res: any) {
         const user = await this.authService.login(req.user);
-        if (!user.isEmailVerified) {
+        if (!user.email) {
             this.eventEmitter.emit("user.welcome", {
                 name: `${user.firstName} ${user.lastName}`,
                 email: user.email,
@@ -49,10 +45,6 @@ export class AuthController {
     @Post("register")
     @ApiOperation({ summary: 'Register with email, password and username' })
     @UsePipes(new ValidationPipe())
-<<<<<<< HEAD
-    async register(@Body() body: SignUpDto) {
-        return this.authService.register(body.email, body.password, body.firstName, body.lastName, body.confirmPassword);
-=======
     async register(@Body() body: SignUpDto, @Res() res: any) {
         const user = await this.authService.register(body.email, body.password, body.firstName, body.lastName, body.confirmPassword);
         this.eventEmitter.emit('user.welcome', {
@@ -70,7 +62,6 @@ export class AuthController {
     @UseGuards(AuthGuard("jwt"))
     async verifyEmail(@Req() req: any) {
         return await this.authService.verifyEmail(req.user);
->>>>>>> be63b694591305f8994ff5b42ceda1a21d87e7ab
     }
 
     @Get("google")
