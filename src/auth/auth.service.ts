@@ -2,10 +2,11 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from "bcryptjs";
 import { JwtService } from '@nestjs/jwt';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly prismaService: PrismaService, private readonly jwtService: JwtService) { }
+    constructor(private readonly prismaService: PrismaService, private readonly jwtService: JwtService, private readonly eventEmitter: EventEmitter2) { }
 
     async validateUser(email: string, password: string) {
         const user = await this.prismaService.user.findUnique({
@@ -23,16 +24,24 @@ export class AuthService {
     async login(user: any) {
         const payload = { sub: user.uuid, email: user.email, role: user.role }
 
-        return {
+        const response = {
             "email": user.email,
             "firstName": user.firstName,
             "lastName": user.lastName,
             "access_token": this.jwtService.sign(payload)
         }
+
+        this.eventEmitter.emit('user.LoggedIn', {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+        })
+
+        return response;
     }
 
     async loginWithGoogle(user: any) {
-        const { provider, providerId, email, firstName, lastName , image } = user;
+        const { provider, providerId, email, firstName, lastName, image } = user;
 
         let existingUser = await this.prismaService.user.findFirst({
             where: {
@@ -65,7 +74,7 @@ export class AuthService {
                 email,
                 provider: "GOOGLE",
                 providerId,
-                image 
+                image
             }
         })
 
@@ -93,24 +102,40 @@ export class AuthService {
             throw new ConflictException("An account already exists.");
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await this.prismaService.user.create({
-            data: {
-                firstName,
-                lastName,
-                email,
-                password: hashedPassword
+            const user = await this.prismaService.user.create({
+                data: {
+                    firstName,
+                    lastName,
+                    email,
+                    password: hashedPassword
+                }
+            })
+
+            const payload = { sub: user.uuid, email: user.email, role: user.role }
+
+            const response = {
+                "email": user.email,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "access_token": this.jwtService.sign(payload)
             }
-        })
 
-        const payload = { sub: user.uuid, email: user.email, role: user.role }
+            this.eventEmitter.emit('user.registered', {
+                uuid: user.uuid,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
 
-        return {
-            "email": user.email,
-            "firstName": user.firstName,
-            "lastName": user.lastName,
-            "access_token": this.jwtService.sign(payload)
+            })
+            return response;
+        } catch (error) {
+            console.error(error);
+            throw new ConflictException("An error occurred while registering.");
+
         }
     }
 }
