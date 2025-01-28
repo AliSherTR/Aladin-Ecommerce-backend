@@ -5,8 +5,19 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "assets": [
+<<<<<<< HEAD
       "mail/templates/**/*"
     ],
     "watchAssets": true
   }
 }
+=======
+      {
+        "include": "src/email/templates/**/*",
+        "outDir": "dist/email/templates"
+      }
+    ], 
+    "watchAssets": true 
+  }
+} 
+>>>>>>> be63b694591305f8994ff5b42ceda1a21d87e7ab

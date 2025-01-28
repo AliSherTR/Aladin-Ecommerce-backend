@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TypedEventEmitterModule } from 'src/event-emitter/event-emitter.module';
 
 @Module({
   imports: [PrismaModule, JwtModule.register({
@@ -13,8 +14,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     signOptions: {
       expiresIn: "30d"
     }
+<<<<<<< HEAD
   }),
   ],
+=======
+  }) , TypedEventEmitterModule ],
+>>>>>>> be63b694591305f8994ff5b42ceda1a21d87e7ab
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, GoogleStrategy, JwtStrategy]
 })
