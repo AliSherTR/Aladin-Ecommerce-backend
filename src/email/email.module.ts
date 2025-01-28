@@ -4,7 +4,6 @@ import { EmailController } from './email.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
-import { MailListeners } from './email.listeners';
 
 @Module({
   imports: [
@@ -31,7 +30,7 @@ import { MailListeners } from './email.listeners';
     }),
   ],
   controllers: [EmailController],
-  providers: [EmailService, MailListeners],
+  providers: [EmailService],
 })
 export class EmailModule { }
 
