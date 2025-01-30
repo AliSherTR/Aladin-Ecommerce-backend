@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  alladin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: alladin  # Ensure the image name is "alladin"
+    container_name: alladin  # Ensure the container name is "alladin"
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
