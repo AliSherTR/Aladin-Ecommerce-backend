@@ -1,6 +1,7 @@
 import {
     ConflictException,
     Injectable,
+    InternalServerErrorException,
     UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -129,43 +130,48 @@ export class AuthService {
         lastName: string,
         confirmPassword: string,
     ) {
-        if (password !== confirmPassword) {
-            throw new ConflictException('Passwords Do Not Match');
+        try {
+            if (password !== confirmPassword) {
+                throw new ConflictException('Passwords Do Not Match');
+            }
+            const existingUser = await this.prismaService.user.findUnique({
+                where: {
+                    email,
+                },
+            });
+
+            if (existingUser) {
+                throw new ConflictException('An account already exists.');
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const user = await this.prismaService.user.create({
+                data: {
+                    firstName,
+                    lastName,
+                    email,
+                    password: hashedPassword,
+                },
+            });
+
+            const payload = {
+                sub: user.uuid,
+                email: user.email,
+                role: user.role,
+                IsEmailVerified: user.isEmailVerified,
+            };
+
+            return {
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                access_token: this.jwtService.sign(payload),
+            };
+        } catch (error) {
+            console.error("❌ Backend Error in Register Function:", error);
+            throw new InternalServerErrorException("Something went wrong during registration.");
         }
-        const existingUser = await this.prismaService.user.findUnique({
-            where: {
-                email,
-            },
-        });
-
-        if (existingUser) {
-            throw new ConflictException('An account already exists.');
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await this.prismaService.user.create({
-            data: {
-                firstName,
-                lastName,
-                email,
-                password: hashedPassword,
-            },
-        });
-
-        const payload = {
-            sub: user.uuid,
-            email: user.email,
-            role: user.role,
-            IsEmailVerified: user.isEmailVerified,
-        };
-
-        return {
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            access_token: this.jwtService.sign(payload),
-        };
     }
 
     async verifyEmail(user: any) {

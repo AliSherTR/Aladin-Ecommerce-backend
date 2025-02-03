@@ -69,4 +69,25 @@ export class UsersService {
     }
   }
 
+  async deleteUserInformation(id: string) {
+    try {
+      const deleteUser = await this.prismaService.user.delete({
+        where: { uuid: id }
+      })
+
+      if (!deleteUser) {
+        throw new ConflictException("No User found with the given id")
+      }
+      return {
+        status: "success",
+        message: "User Deleted Successfully",
+      }
+    } catch (error) {
+      if (error.code === "P2025") {
+        throw new ConflictException("No User found with the given id")
+      }
+      throw new HttpException("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
 } 

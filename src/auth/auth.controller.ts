@@ -23,7 +23,7 @@ export class AuthController {
             this.eventEmitter.emit("user.welcome", {
                 name: `${user.firstName} ${user.lastName}`,
                 email: user.email,
-                activationLink: `http://localhost:3000/${user.access_token}`,
+                activationLink: `http://localhost:3000/email?token=${encodeURIComponent(user.access_token)}`,
 
             })
             return res.status(401).json({
@@ -44,18 +44,23 @@ export class AuthController {
 
     @Post("register")
     @ApiOperation({ summary: 'Register with email, password and username' })
-    @UsePipes(new ValidationPipe())
+    // @UsePipes(new ValidationPipe())
     async register(@Body() body: SignUpDto, @Res() res: any) {
-        const user = await this.authService.register(body.email, body.password, body.firstName, body.lastName, body.confirmPassword);
-        this.eventEmitter.emit('user.welcome', {
-            name: `${body.firstName} ${body.lastName}`,
-            email: body.email,
-            activationLink: `http://localhost:3000/${user.access_token}`
-        });
-        return res.status(401).json({
-            status: "success",
-            message: `We have sent you an email at ${user.email} to activate your account`
-        })
+        try {
+            const user = await this.authService.register(body.email, body.password, body.firstName, body.lastName, body.confirmPassword);
+            this.eventEmitter.emit('user.welcome', {
+                name: `${body.firstName} ${body.lastName}`,
+                email: body.email,
+                activationLink: `http://localhost:3000/email?token=${encodeURIComponent(user.access_token)}`
+            });
+            return res.status(401).json({
+                status: "success",
+                message: `We have sent you an email at ${user.email} to activate your account`
+            })
+        } catch (error) {
+            console.error("❌ Registration Error:", error);
+            return res.status(500).json({ status: "error", message: error.message });
+        }
     }
 
     @Post("verify-email")
