@@ -50,7 +50,7 @@ export class AuthController {
         this.eventEmitter.emit('user.welcome', {
             name: `${body.firstName} ${body.lastName}`,
             email: body.email,
-            activationLink: `http://localhost:3000/${user.access_token}`
+            activationLink: `http://localhost:3000/email/${user.access_token}`
         });
         return res.status(401).json({
             status: "success",
