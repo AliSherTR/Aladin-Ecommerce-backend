@@ -50,7 +50,7 @@ export class AuthController {
         this.eventEmitter.emit('user.welcome', {
             name: `${body.firstName} ${body.lastName}`,
             email: body.email,
-            activationLink: `http://localhost:3000/email/${user.access_token}`
+            activationLink: `https://aladin-ecommerce-ten.vercel.app/email/${user.access_token}`
         });
         return res.status(401).json({
             status: "success",
@@ -84,6 +84,6 @@ export class AuthController {
         });
 
         // Redirect to the frontend
-        res.redirect(`http://localhost:3000/`);
+        res.redirect(`https://aladin-ecommerce-ten.vercel.app/`);
     }
 }
