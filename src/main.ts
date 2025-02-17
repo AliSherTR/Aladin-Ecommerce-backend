@@ -6,8 +6,11 @@ import * as cookieParser from "cookie-parser";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: "*",
-  })
+    origin: ["https://aladin-ecommerce-ten.vercel.app" , "*"],
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type, Authorization",
+  });
   app.use(cookieParser());
   app.setGlobalPrefix("api")
   const config = new DocumentBuilder() // configure the meta data for swagger documentation
